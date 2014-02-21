@@ -1,5 +1,7 @@
 This is an IDL script to calculate the background order overlap.  The key parameter is the off-band rejection that the filter can provide.  This script seeks to estimate the real specification.
 
+User beware:  There is tons of hardcode here.  This is really just a framework.
+
 The rough sketch of the code is:
 
 1) Use the observed published Kitt Peak Observatory atmospheric spectrum.  It assumes Earth albedo is 100% everywhere, always.
