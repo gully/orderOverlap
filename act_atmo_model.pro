@@ -59,7 +59,7 @@ for i=0, nm-1 do begin
   x_interp=l_lb[i]+findgen(n_gwls)/n_gwls*l_fsr[i]
   fl_int=interpol(fl[syn_i], wl[syn_i], x_interp)
   
-  const=0.05 ;30 dB suppression
+  const=0.001 ;30 dB suppression
   ind_back[i, *]=fl_int*const
   backg=backg+ind_back[i, *]
 
@@ -74,7 +74,7 @@ device, set_character_size=[9, 12]
 
 
 tot_back=0
-gif_set=1
+gif_set=0
 cd, '/Volumes/cambridge/Astronomy/silicon/ACT/spectrograph/atmo_background/'
 device, decomposed=1
 device, RETAIN=2
@@ -100,7 +100,7 @@ for i=0, nm-1 do begin
       write_gif, outfile+'.gif', image2d, r, g, b
     endif
   
-  wait, 0.1
+  ;wait, 0.1
 endfor  
 
 spawn, 'gifsicle --delay=20 --loop ACT_model_* > '+ $
@@ -109,9 +109,17 @@ spawn, 'rm ACT_model_*'
 
 
 window, 10
-plot, wl_g, fl_g, yrange=[0, 1], xrange=[1608, 1609], xstyle=1, background='FFFFFF'xL, color='000000'xL, $
+plot, wl_g, fl_g, yrange=[0, 1], xrange=[1608, 1652], xstyle=1, background='FFFFFF'xL, color='000000'xL, $
       xtitle='wavelength (nm)', ytitle='relative intensity', title='Simulation of astmospheric background spectrum'
 oplot, wl_g, fl_b, color='FF0000'xL
+xyouts, 1625.0, 0.8, '0.1% = off-band', /data, color='0000FF'xL, charsize=1.0
+
+window, 11
+plot, wl_g, fl_b/fl_g, yrange=[0.997, 1.01], xrange=[1608, 1652], xstyle=1, ystyle=1, background='FFFFFF'xL, color='000000'xL, $
+      xtitle='wavelength (nm)', ytitle='Ratio: Synthetic/Real', title='Simulation of astmospheric background spectrum'
+xyouts, 1608.3, 0.9975, '0.1% = off-band', /data, color='0000FF'xL, charsize=1.0
+
+
 
  print, 1
 
