@@ -74,23 +74,23 @@ device, set_character_size=[9, 12]
 
 
 tot_back=0
-gif_set=0
+gif_set=1
 cd, '/Volumes/cambridge/Astronomy/silicon/ACT/spectrograph/atmo_background/'
 device, decomposed=1
 device, RETAIN=2
 window, 0
 
 for i=0, nm-1 do begin
-  plot, wl_g, ind_back[i, *], yrange=[0, 0.65], ystyle=1, xrange=[1598, 1659], xstyle=1, background='FFFFFF'xL, color='000000'xL, $
+  plot, wl_g, ind_back[i, *], yrange=[0, 0.025], ystyle=1, xrange=[1598, 1659], xstyle=1, background='FFFFFF'xL, color='000000'xL, $
     xtitle='wavelength (nm)', ytitle='relative intensity', title='Simulation of astmospheric background spectrum'
   if mms[i] ne 15 then tot_back=tot_back+ind_back[i, *]
   oplot, wl_g, tot_back, color='0000FF'xL
   out_1='background contribution from: '
   out_message=strcompress('order: '+string(fix(mms[i])))
   out_2= strcompress( number_formatter(l_lb[i], decimals=0) + '< wavelength < '  +  number_formatter(l_ub[i], decimals=0)   )
-  xyouts, 1602.0, 0.6, out_1, /data, color='000000'xL, charsize=2.0
-  xyouts, 1643.0, 0.6, out_message, /data, color='000000'xL, charsize=2.0
-  xyouts, 1602.0, 0.50, out_2, /data, color='000000'xL, charsize=2.0 
+  xyouts, 1602.0, 0.020, out_1, /data, color='000000'xL, charsize=2.0
+  xyouts, 1643.0, 0.020, out_message, /data, color='000000'xL, charsize=2.0
+  xyouts, 1602.0, 0.015, out_2, /data, color='000000'xL, charsize=2.0 
   
     if gif_set then begin    
       WSET, 0
@@ -100,7 +100,7 @@ for i=0, nm-1 do begin
       write_gif, outfile+'.gif', image2d, r, g, b
     endif
   
-  ;wait, 0.1
+  wait, 0.1
 endfor  
 
 spawn, 'gifsicle --delay=20 --loop ACT_model_* > '+ $
@@ -119,6 +119,13 @@ plot, wl_g, fl_b/fl_g, yrange=[0.997, 1.01], xrange=[1608, 1652], xstyle=1, ysty
       xtitle='wavelength (nm)', ytitle='Ratio: Synthetic/Real', title='Simulation of astmospheric background spectrum'
 xyouts, 1608.3, 0.9975, '0.1% = off-band', /data, color='0000FF'xL, charsize=1.0
 
+rat1=fl_b/fl_g
+out_text=['#Predicted order overlap for ACT grating, assuming 0.1% off-band rejection.', $
+           '#Model by Michael Gully-Santiago on 2/25/2014 using ACT_atmo_model.pro', $
+           '#Custom source code available at: https://github.com/gully/orderOverlap', $
+           '#',$
+           '#wavelength (nm), Real atmos. trans., Ratio of (sythetic/real)']
+forprint,  wl_g, fl_g, rat1,   textout='ACT_order_overlap_1630nm_30dB.dat', comment=out_text
 
 
  print, 1
